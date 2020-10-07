@@ -37,6 +37,16 @@ var threat = (function () {
         ignore_missing: true,
     });
 
+//Converting tags from MISP event to elastic event tags
+    var setTags = function (evt) {
+      var mispTags = evt.Get("json.Tag");
+      var elasticTags = [];
+      mispTags.forEach(function(item){
+        elasticTags.push(item.name);
+      });
+      evt.Put("tags", elasticTags);
+   };
+
     var setAttackPattern = function (evt) {
         var indicator_type = evt.Get("json.type");
         var attackPattern;
@@ -202,6 +212,7 @@ var threat = (function () {
         .Add(setThreatFeedField)
         .Add(convertFields)
         .Add(setAttackPattern)
+        .Add(setTags)
         .Build();
 
     return {
