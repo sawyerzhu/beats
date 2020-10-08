@@ -41,10 +41,12 @@ var threat = (function () {
     var setTags = function (evt) {
       var mispTags = evt.Get("json.Tag");
       var elasticTags = [];
-      mispTags.forEach(function(item){
-        elasticTags.push(item.name);
-      });
-      evt.Put("tags", elasticTags);
+      if (mispTags != null) {
+        mispTags.forEach(function(item){
+          elasticTags.push(item.name);
+        });
+        evt.Put("tags", elasticTags);
+      }
    };
 
     var setAttackPattern = function (evt) {
