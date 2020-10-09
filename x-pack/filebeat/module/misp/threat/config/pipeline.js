@@ -37,15 +37,13 @@ var threat = (function () {
         ignore_missing: true,
     });
 
-//Converting tags from MISP event to elastic event tags
+//Copy tags from MISP event to elastic event tags
     var setTags = function (evt) {
       var mispTags = evt.Get("json.Tag");
-      var elasticTags = [];
       if (mispTags != null) {
         mispTags.forEach(function(item){
-          elasticTags.push(item.name);
+          evt.AppendTo("tags", item.name)
         });
-        evt.Put("tags", elasticTags);
       }
    };
 
