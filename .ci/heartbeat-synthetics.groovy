@@ -23,6 +23,7 @@ pipeline {
   }
   triggers {
     issueCommentTrigger('(?i)^\\/packag[ing|e] synthetics$')
+    upstream("apm-agent-rum/elastic-synthetics/${ env.JOB_BASE_NAME.startsWith('PR-') ? 'none' : 'master' }")
   }
   parameters {
     booleanParam(name: 'linux', defaultValue: true, description: 'Allow linux stages.')
@@ -73,11 +74,10 @@ def pushCIDockerImages(){
 
 def tagAndPush(name){
   def libbetaVer = sh(label: 'Get libbeat version', script: 'grep defaultBeatVersion ${BASE_DIR}/libbeat/version/version.go|cut -d "=" -f 2|tr -d \\"', returnStdout: true)?.trim()
-  libbetaVer += "${env.SYNTHETICS}"
 
   def tagName = "${libbetaVer}"
-  def oldName = "${DOCKER_REGISTRY}/beats/${name}:${libbetaVer}"
-  def newName = "${DOCKER_REGISTRY}/observability-ci/${name}:${tagName}"
+  def oldName = "${DOCKER_REGISTRY}/beats/${name}:${libbetaVer}-SNAPSHOT"
+  def newName = "${DOCKER_REGISTRY}/observability-ci/${name}:${libbetaVer}${env.SYNTHETICS}"
   def commitName = "${DOCKER_REGISTRY}/observability-ci/${name}:${env.GIT_BASE_COMMIT}"
   dockerLogin(secret: "${DOCKERELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
   retry(3){
