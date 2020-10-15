@@ -73,6 +73,16 @@ func FetchRedisInfo(stat string, c rd.Conn) (map[string]string, error) {
 	return ParseRedisInfo(out), nil
 }
 
+// FetchDbsize returns dbsize of selected db.
+func FetchDbsize(c rd.Conn) (int64, error) {
+	size, err := rd.Int64(c.Do("DBSIZE"))
+	if err != nil {
+		logp.Err("Error retrieving DBSIZE stats: %v", err)
+		return 0, err
+	}
+	return size, nil
+}
+
 // FetchSlowLogLength returns count of slow operations
 func FetchSlowLogLength(c rd.Conn) (int64, error) {
 	count, err := rd.Int64(c.Do("SLOWLOG", "len"))

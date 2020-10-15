@@ -1,0 +1,10 @@
+- name: dbs
+  type: group
+  release: beta
+  description: >
+    dbs
+  fields:
+    - name: dbsize
+      type: long
+      description: >
+        Example field
