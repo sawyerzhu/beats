@@ -1,8 +1,6 @@
 package dbs
 
 import (
-	"strconv"
-
 	"github.com/elastic/beats/v7/libbeat/common/cfgwarn"
 	"github.com/elastic/beats/v7/metricbeat/mb"
 	"github.com/elastic/beats/v7/metricbeat/module/redis"
@@ -57,19 +55,19 @@ func (m *MetricSet) Fetch(report mb.ReporterV2) error {
 	}()
 
 	// Fetch default INFO.
-	size, err := redis.FetchDbsize(conn)
-	if err != nil {
-		return errors.Wrap(err, "failed to fetch dbsize info")
-	}
+	// size, err := redis.FetchDbsize(conn)
+	// if err != nil {
+	// 	return errors.Wrap(err, "failed to fetch dbsize info")
+	// }
 
 	info := make(map[string]interface{})
-	info["dbsize"] = strconv.FormatInt(size, 10)
+	info["dbsize"] = 1 //strconv.FormatInt(size, 10)
 
 	m.Logger().Debugf("Redis DBSIZE from %s: %+v", m.Host(), info)
 
-	mb.Event{
+	report.Event(mb.Event{
 		MetricSetFields: info,
-	}
+	})
 
 	return nil
 }
