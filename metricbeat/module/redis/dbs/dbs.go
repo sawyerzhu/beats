@@ -1,7 +1,6 @@
 package dbs
 
 import (
-	"github.com/elastic/beats/v7/libbeat/common/cfgwarn"
 	"github.com/elastic/beats/v7/metricbeat/mb"
 	"github.com/elastic/beats/v7/metricbeat/module/redis"
 	"github.com/pkg/errors"
@@ -23,24 +22,13 @@ type MetricSet struct {
 	*redis.MetricSet
 }
 
-// New creates a new instance of the MetricSet. New is responsible for unpacking
-// any MetricSet specific configuration options if there are any.
+// New creates new instance of MetricSet
 func New(base mb.BaseMetricSet) (mb.MetricSet, error) {
-	cfgwarn.Beta("The redis dbs metricset is beta.")
-
-	config := struct{}{}
-	if err := base.Module().UnpackConfig(&config); err != nil {
-		return nil, err
-	}
-
 	ms, err := redis.NewMetricSet(base)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to create 'key' metricset")
+		return nil, errors.Wrap(err, "failed to create 'info' metricset")
 	}
-
-	return &MetricSet{
-		MetricSet: ms,
-	}, nil
+	return &MetricSet{ms}, nil
 }
 
 // Fetch methods implements the data gathering and data conversion to the right
